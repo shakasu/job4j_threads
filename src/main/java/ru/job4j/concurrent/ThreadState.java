@@ -15,7 +15,7 @@ public class ThreadState {
         
         while (
             first.getState() != Thread.State.TERMINATED
-        && second.getState() != Thread.State.TERMINATED
+        || second.getState() != Thread.State.TERMINATED
         ) {
             getNameAndState(first);
             getNameAndState(second);
