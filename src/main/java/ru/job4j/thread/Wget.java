@@ -45,6 +45,7 @@ public class Wget implements Runnable {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
     
