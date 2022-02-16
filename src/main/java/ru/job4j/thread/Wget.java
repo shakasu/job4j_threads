@@ -6,8 +6,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
-//"https://raw.githubusercontent.com/shakasu/job4j_threads/master/download_me.json" 100
-//"https://proof.ovh.net/files/10Mb.dat" 1048576
 
 public class Wget implements Runnable {
     private final String url;
