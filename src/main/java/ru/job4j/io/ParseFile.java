@@ -11,29 +11,29 @@ public class ParseFile {
         this.file = file;
     }
     
-    public String getContent() throws IOException {
+    public synchronized String getContent() throws IOException {
         return content(data -> true);
     }
     
-    public String getContentWithoutUnicode() throws IOException {
+    public synchronized String getContentWithoutUnicode() throws IOException {
         return content(data -> data < 0x80);
     }
     
     private String content(Predicate<Integer> filter) throws IOException {
-        String output = "";
+        StringBuilder output = new StringBuilder();
         int data;
         
         try (FileInputStream in = new FileInputStream(file);
              BufferedInputStream bufferedInStream = new BufferedInputStream(in)) {
-            while ((data = bufferedInStream.read()) > 0) {
+            while ((data = bufferedInStream.read()) >= 0) {
                 if (filter.test(data)) {
-                    output += (char) data;
+                    output.append((char) data);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         
-        return output;
+        return output.toString();
     }
 }

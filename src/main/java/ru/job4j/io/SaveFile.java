@@ -10,12 +10,7 @@ public class SaveFile {
         this.file = file;
     }
     
-    public void saveContent(String content) throws IOException {
-        OutputStream o = new FileOutputStream(file);
-        for (int i = 0; i < content.length(); i += 1) {
-            o.write(content.charAt(i));
-        }
-        
+    public synchronized void saveContent(String content) {
         try (FileOutputStream out = new FileOutputStream(file);
              BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(out)) {
             bufferedOutputStream.write(
