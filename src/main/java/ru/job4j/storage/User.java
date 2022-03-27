@@ -1,5 +1,7 @@
 package ru.job4j.storage;
 
+import java.util.Objects;
+
 public final class User {
     private final int id;
     private final int amount;
@@ -15,5 +17,18 @@ public final class User {
     
     public int getAmount() {
         return amount;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id && amount == user.amount;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, amount);
     }
 }
