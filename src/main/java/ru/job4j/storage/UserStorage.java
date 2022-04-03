@@ -12,12 +12,12 @@ public class UserStorage {
     @GuardedBy("this")
     private final Map<Integer, User> storage = new HashMap<>();
     
-    public synchronized User add(User user) {
-        return storage.putIfAbsent(user.getId(), user);
+    public synchronized boolean add(User user) {
+        return storage.putIfAbsent(user.getId(), user) == null;
     }
     
-    public synchronized User update(User user) {
-        return storage.replace(user.getId(), user);
+    public synchronized boolean update(User user) {
+        return storage.replace(user.getId(), user) != null;
     }
     
     public synchronized boolean delete(User user) {
@@ -33,9 +33,9 @@ public class UserStorage {
         if (sender.getAmount() < amount) {
             throw new RuntimeException(String.format("Sender: [%s] not have enough money!", sender.toString()));
         }
-        var newSender = new User(fromId, sender.getAmount() - amount);
-        var newReceiver = new User(toId, receiver.getAmount() + amount);
-        update(newSender);
-        update(newReceiver);
+        sender.setAmount(sender.getAmount() - amount);
+        receiver.setAmount(receiver.getAmount() + amount);
+        update(sender);
+        update(receiver);
     }
 }
