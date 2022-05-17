@@ -11,15 +11,23 @@ import static org.hamcrest.core.Is.is;
 public class SimpleBlockingQueueTest {
     @Test
     public void add() throws InterruptedException {
-        var queue = new SimpleBlockingQueue<Integer>();
+        var queue = new SimpleBlockingQueue<Integer>(10);
         Thread producer = new Thread(() -> {
             for (Integer i : Stream.iterate(0, i -> i + 1).limit(10).collect(Collectors.toList())) {
-                queue.offer(i);
+                try {
+                    queue.offer(i);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
         Thread consumer = new Thread(() -> {
             for (int i = 0; i < 9; i++) {
-                queue.poll();
+                try {
+                    queue.poll();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
         producer.start();
