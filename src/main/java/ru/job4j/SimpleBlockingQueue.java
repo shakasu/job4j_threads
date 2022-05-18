@@ -19,11 +19,7 @@ public class SimpleBlockingQueue<T> {
     
     public synchronized void offer(T value) throws InterruptedException {
         while (queue.size() > size) {
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                throw e;
-            }
+            this.wait();
         }
         queue.offer(value);
         notify();
@@ -32,11 +28,7 @@ public class SimpleBlockingQueue<T> {
     
     public synchronized T poll() throws InterruptedException {
         while (queue.size() == 0) {
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                throw e;
-            }
+            this.wait();
         }
         var first = queue.poll();
         notify();
