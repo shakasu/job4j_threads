@@ -19,4 +19,13 @@ public class CacheTest {
         cache.delete(refreshedFirst);
         assertNull(cache.get(1));
     }
+    
+    @Test(expected = RuntimeException.class)
+    public void whenException() {
+        Cache cache = new Cache();
+        Base first = new Base(1, 1);
+        cache.add(first);
+        cache.update(first);
+        cache.update(first);
+    }
 }
