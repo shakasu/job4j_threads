@@ -6,22 +6,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ThreadPool {
-    private final static List<Thread> THREADS = new LinkedList<>();
+    private final List<Thread> threads = new LinkedList<>();
     private final static int POOL_SIZE = Runtime.getRuntime().availableProcessors();
     
     private final SimpleBlockingQueue<Runnable> tasks;
     
-    public ThreadPool(int threadPoolSize) throws InterruptedException {
+    public ThreadPool(int threadPoolSize) {
         tasks = new SimpleBlockingQueue<>(threadPoolSize);
         
-        while (!isAllStopped()) {
-            removeTerminatedThreads();
-            
-            if (THREADS.size() < POOL_SIZE) {
-                Thread thread = new Thread(tasks.poll());
-                THREADS.add(thread);
-                thread.start();
-            }
+        for (int i = 0; i <= POOL_SIZE; i++) {
+            Thread thread = new Thread(getTask());
+            threads.add(thread);
+            thread.start();
         }
     }
     
@@ -30,25 +26,18 @@ public class ThreadPool {
     }
     
     public void shutdown() {
-        THREADS.forEach(Thread::interrupt);
+        threads.forEach(Thread::interrupt);
     }
     
-    private boolean isAllStopped() {
-        for (Thread thread : THREADS) {
-            if (!thread.isInterrupted()) {
-                return false;
+    private Runnable getTask() {
+        return () -> {
+            while (!tasks.isEmpty() || !Thread.currentThread().isInterrupted()) {
+                try {
+                    tasks.poll();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
-        }
-        return true;
-    }
-    
-    private void removeTerminatedThreads() {
-        List<Thread> terminatedList = new LinkedList<>();
-        for (Thread thread : THREADS) {
-            if (Thread.State.TERMINATED.equals(thread.getState())) {
-                terminatedList.add(thread);
-            }
-        }
-        THREADS.removeAll(terminatedList);
+        };
     }
 }
