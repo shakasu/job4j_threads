@@ -11,7 +11,7 @@ public class ParallelSearchIndexTest {
     public void whenSizeLess10() {
         var refValue = "refValue";
         var array = new String[]{"", "", "", "", "", "", "", refValue};
-        var stringParallelSearchIndex = new ParallelSearchIndex<>(array, refValue, 0);
+        var stringParallelSearchIndex = new ParallelSearchIndex<>(array, refValue, 0, array.length);
 
         var expectedIndex = array.length - 1;
 
@@ -27,7 +27,7 @@ public class ParallelSearchIndexTest {
                 "", "", "", "", "", "", "",
                 "", "", "", "", "", "", "",
         };
-        var stringParallelSearchIndex = new ParallelSearchIndex<>(array, refValue, 0);
+        var stringParallelSearchIndex = new ParallelSearchIndex<>(array, refValue, 0, array.length);
 
         var expectedIndex = 7;
 
