@@ -1,5 +1,6 @@
 package ru.job4j.pool;
 
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 
 public class ParallelSearchIndex<T> extends RecursiveTask<Integer> {
@@ -8,22 +9,22 @@ public class ParallelSearchIndex<T> extends RecursiveTask<Integer> {
     private final int start;
     private final int finish;
 
-    public ParallelSearchIndex(T[] list, T referenceValue, int start, int finish) {
+    private ParallelSearchIndex(T[] list, T referenceValue, int start, int finish) {
         this.list = list;
         this.referenceValue = referenceValue;
         this.start = start;
         this.finish = finish;
     }
 
-    private static <T> int linearSearch(int start, int finish, T referenceValue, T[] list) {
+    private int linearSearch(int start, int finish, T referenceValue, T[] list) {
         if (referenceValue == null) {
-            for (int i = start; i < finish; i++) {
+            for (int i = start; i <= finish; i++) {
                 if (list[i] == null) {
                     return i;
                 }
             }
         } else {
-            for (int i = start; i < finish; i++) {
+            for (int i = start; i <= finish; i++) {
                 if (referenceValue.equals(list[i])) {
                     return i;
                 }
@@ -42,8 +43,8 @@ public class ParallelSearchIndex<T> extends RecursiveTask<Integer> {
 
         var mid = size / 2;
 
-        var leftSearch = new ParallelSearchIndex<>(list, referenceValue, start, mid);
-        var rightSearch = new ParallelSearchIndex<>(list, referenceValue, mid + 1, finish);
+        var leftSearch = new ParallelSearchIndex<>(list, referenceValue, start, mid - 1);
+        var rightSearch = new ParallelSearchIndex<>(list, referenceValue, mid + 1, finish - 1);
 
         leftSearch.fork();
         rightSearch.fork();
@@ -51,6 +52,10 @@ public class ParallelSearchIndex<T> extends RecursiveTask<Integer> {
         var leftValue = leftSearch.join();
         var rightValue = rightSearch.join();
 
-        return leftValue.equals(-1) && !rightValue.equals(-1) ? rightValue : leftValue;
+        return Math.max(rightValue, leftValue);
+    }
+
+    public static <T> int search(T[] array, T refValue) {
+        return new ForkJoinPool().invoke(new ParallelSearchIndex<>(array, refValue, 0, array.length - 1));
     }
 }
