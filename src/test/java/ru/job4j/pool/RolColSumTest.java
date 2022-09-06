@@ -3,6 +3,8 @@ package ru.job4j.pool;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.concurrent.ExecutionException;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static ru.job4j.pool.RolColSum.asyncSum;
@@ -28,7 +30,7 @@ public class RolColSumTest {
     }
 
     @Test
-    public void async() {
+    public void async() throws ExecutionException, InterruptedException {
         assertThat(asyncSum(matrix), is(expected));
     }
 
