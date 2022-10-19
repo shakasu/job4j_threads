@@ -19,7 +19,8 @@ public class Resp {
 
     public enum Status {
         OK("200"),
-        NOT_FOUND("203");
+        NOT_FOUND("203"),
+        NOT_IMPLEMENTED("501");
 
         private final String code;
 

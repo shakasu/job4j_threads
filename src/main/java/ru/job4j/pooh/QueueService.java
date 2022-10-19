@@ -5,8 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static ru.job4j.pooh.Req.POST;
-import static ru.job4j.pooh.Resp.Status.NOT_FOUND;
-import static ru.job4j.pooh.Resp.Status.OK;
+import static ru.job4j.pooh.Resp.Status.*;
 
 public class QueueService implements Service {
     private final Map<String, ConcurrentLinkedQueue<String>> queues = new ConcurrentHashMap<>();
@@ -27,11 +26,18 @@ public class QueueService implements Service {
                 currentQueue.add(param);
             }
         } else {
-            var value = currentQueue.poll();
+            var value = "";
+            if (!currentQueue.isEmpty()) {
+                value = currentQueue.poll();
+            }
             resp = new Resp(
-                    value == null ? "" : value,
-                    value == null ? NOT_FOUND : OK
+                    value,
+                    "".equals(value) ? NOT_FOUND : OK
             );
+        }
+
+        if (isMethodUnavailable(req.httpRequestType())) {
+            resp = new Resp("", NOT_IMPLEMENTED);
         }
 
         return resp;

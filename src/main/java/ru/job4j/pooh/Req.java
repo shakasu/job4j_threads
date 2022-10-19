@@ -1,5 +1,7 @@
 package ru.job4j.pooh;
 
+import java.util.Set;
+
 public class Req {
 
     private final String httpRequestType;
@@ -9,6 +11,10 @@ public class Req {
 
     public final static String GET = "GET";
     public final static String POST = "POST";
+
+    public static final Set<String> AVAILABLE_METHODS = Set.of(
+            GET, POST
+    );
 
     public Req(String httpRequestType, String poohMode, String sourceName, String param) {
         this.httpRequestType = httpRequestType;
