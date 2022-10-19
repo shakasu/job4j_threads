@@ -68,4 +68,12 @@ public class QueueServiceTest {
         assertThat(result3.text(), is(""));
         assertThat(result3.status(), is("203"));
     }
+
+    @Test
+    public void whenQueueServiceTesting() {
+        QueueService queueService = new QueueService();
+        Resp result = queueService.process(
+                new Req("GET", "queue", "weather", null));
+        assertThat(result.text(), is(""));
+    }
 }
