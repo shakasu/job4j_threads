@@ -17,26 +17,23 @@ public class TopicService implements Service {
         var source = req.getSourceName();
         var param = req.getParam();
         var method = req.httpRequestType();
-        var currentQueue = queues.get(source);
 
         if (POST.equals(method)) {
             if (queues.get(source) != null) {
                 queues.get(source).values().forEach(e -> e.add(param));
             }
-        }
-        if (GET.equals(method)) {
-            if (queues.get(source) != null && queues.get(source).get(param) != null) {
-                var value = "";
-                if (!currentQueue.isEmpty()) {
-                    value = currentQueue.get(param).poll();
-                }
-                resp = new Resp(
-                        value,
-                        "".equals(value) ? NOT_FOUND : OK
-                );
-            } else {
-                queues.putIfAbsent(source, Map.of(param, new ConcurrentLinkedQueue<>()));
+        } else if (GET.equals(method)) {
+            queues.putIfAbsent(source, new ConcurrentHashMap<>());
+            queues.get(source).putIfAbsent(req.getParam(), new ConcurrentLinkedQueue<>());
+            var currentQueue = queues.get(source).get(req.getParam());
+            var value = "";
+            if (!currentQueue.isEmpty()) {
+                value = currentQueue.poll();
             }
+            resp = new Resp(
+                    value,
+                    "".equals(value) ? NOT_FOUND : OK
+            );
         }
         return resp;
     }

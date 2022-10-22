@@ -15,22 +15,15 @@ public class QueueService implements Service {
     public Resp process(Req req) {
         var resp = new Resp("", NOT_IMPLEMENTED);
         var source = req.getSourceName();
-        var param = req.getParam();
         var method = req.httpRequestType();
-        var currentQueue = queues.get(source);
 
         if (POST.equals(method)) {
-            if (currentQueue == null) {
-                var newQueue = new ConcurrentLinkedQueue<String>();
-                newQueue.add(param);
-                queues.putIfAbsent(source, newQueue);
-            } else {
-                currentQueue.add(param);
-            }
-        }
-        if (GET.equals(method)) {
+            queues.putIfAbsent(req.getSourceName(), new ConcurrentLinkedQueue<>());
+            queues.get(req.getSourceName()).add(req.getParam());
+        } else if (GET.equals(method)) {
             var value = "";
-            if (currentQueue != null && !currentQueue.isEmpty()) {
+            var currentQueue = queues.getOrDefault(source, new ConcurrentLinkedQueue<>());
+            if (!currentQueue.isEmpty()) {
                 value = currentQueue.poll();
             }
             resp = new Resp(
